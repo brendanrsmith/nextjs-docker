@@ -1,5 +1,5 @@
 import Head from "next/head"
-import Image from "next/image"
+// import Image from "next/image"
 
 export default function Home(props: { allPosts: any }): JSX.Element {
   return (
@@ -29,13 +29,14 @@ export default function Home(props: { allPosts: any }): JSX.Element {
         <div className=" flex justify-center">
           <div className={"flex flex-col outline-pink-400 outline-dashed max-w-2xl p-2"}>
 
-            {props.allPosts.map((post: any) => {
+            {props.allPosts?.map((post: any) => {
+              console.log(post);
               return (
                 < div className="mt-8 first:mt-0" key={post.id} >
                   <h2 className="text-2xl">{post.attributes.name}</h2>
                   <p className="italic">{post.attributes.height} ft</p>
                   <p className="text-lg">{post.attributes.description}</p>
-                  <Image src={`${process.env.NEXT_PUBLIC_STRAPI_IMAGE_URL + post.attributes.photo.data.attributes.url}`} alt={post.attributes.name} width={post.attributes.photo.data.attributes.formats.thumbnail.width} height={post.attributes.photo.data.attributes.formats.thumbnail.height} />
+                  {/* <Image src={`${post}`} alt={post.attributes.name} width={post.attributes.photo.data.attributes.formats.thumbnail.width} height={post.attributes.photo.data.attributes.formats.thumbnail.height} /> */}
                 </div>
               )
             })
