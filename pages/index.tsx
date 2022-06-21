@@ -29,7 +29,7 @@ export default function Home(props: { allPosts: any }): JSX.Element {
         <div className=" flex justify-center">
           <div className={"flex flex-col outline-pink-400 outline-dashed max-w-2xl p-2"}>
 
-            {props.allPosts?.map((post: any) => {
+            {props?.allPosts?.map((post: any) => {
               console.log(post);
               return (
                 < div className="mt-8 first:mt-0" key={post.id} >
