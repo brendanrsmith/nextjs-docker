@@ -1,11 +1,11 @@
 import Head from "next/head"
 import Image from "next/image"
 
-export default function Home(): JSX.Element {
+export default function Home(props: { allPosts: any }): JSX.Element {
   return (
     <div className={"flex flex-col min-h-screen dark:bg-zinc-800 dark:text-zinc-300 text-center"}>
       <Head>
-        <title>Create Next App</title>
+        <title>Nextjs-docker</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -19,101 +19,42 @@ export default function Home(): JSX.Element {
             "text-3xl pt-24 py-10 font-mono  text-orange-500"
           }
         >
-          Hello to{" "}
-          <a className={"underline"} href="https://nextjs.org">
+          Hello {" "}
+          <a className={"underline bg-slate-200 drop-shadow-xl shadow-slate-100 p-2 rounded-sm hover:shadow-lg hover:shadow-orange-500 dark:shadow-lg dark:bg-transparent transition-shadow dark:shadow-orange-400"} href="https://nextjs.org">
             Next.js
           </a>{" "}
           on Docker!
         </h1>
+        <h3 className="text-pink-400 text-xl">With external Strapi data:</h3>
+        <div className=" flex justify-center">
+          <div className={"flex flex-col outline-pink-400 outline-dashed max-w-2xl p-2"}>
 
-        <p className={"m-2 mb-8"}>
-          Get started by editing{" "}
-          <code
-            className={
-              "font-mono bg-zinc-100 dark:bg-zinc-600 rounded-md py-1 px-2 text-sm"
+            {props.allPosts.map((post: any) => {
+              return (
+                < div className="mt-8 first:mt-0" key={post.id} >
+                  <h2 className="text-2xl">{post.attributes.name}</h2>
+                  <p className="italic">{post.attributes.height} ft</p>
+                  <p className="text-lg">{post.attributes.description}</p>
+                  <Image src={`${process.env.NEXT_PUBLIC_STRAPI_IMAGE_URL + post.attributes.photo.data.attributes.url}`} alt={post.attributes.name} width={post.attributes.photo.data.attributes.formats.thumbnail.width} height={post.attributes.photo.data.attributes.formats.thumbnail.height} />
+                </div>
+              )
+            })
             }
-          >
-            pages/index.js
-          </code>
-        </p>
-
-        <div
-          className={
-            "grid lg:grid-cols-2 gap-5 max-w-4xl m-3 mx-auto "
-          }
-        >
-          <a
-            href="https://nextjs.org/docs"
-            className={
-              "p-6 rounded-lg shadow-md max-w-md flex flex-col mx-auto text-lg hover:text-blue-500 dark:border-zinc-400 dark:border-2 dark:hover:border-blue-500 transition-all"
-            }
-          >
-            <h3>Documentation &rarr;</h3>
-            <p>
-              Find in-depth information about Next.js features and
-              API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className={
-              "p-6 rounded-lg shadow-md max-w-md flex flex-col mx-auto text-lg hover:text-blue-500 dark:border-zinc-400 dark:border-2 dark:hover:border-blue-500 transition-all "
-            }
-          >
-            <h3>Learn &rarr;</h3>
-            <p>
-              Learn about Next.js in an interactive course with
-              quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={
-              "p-6 rounded-lg shadow-md max-w-md flex flex-col mx-auto text-lg hover:text-blue-500 dark:border-zinc-400 dark:border-2 dark:hover:border-blue-500 transition-all"
-            }
-          >
-            <h3>Examples &rarr;</h3>
-            <p>
-              Discover and deploy boilerplate example Next.js
-              projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={
-              "p-6 rounded-lg shadow-md max-w-md flex flex-col mx-auto text-lg hover:text-blue-500 dark:border-zinc-400 dark:border-2 dark:hover:border-blue-500 transition-all"
-            }
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL
-              with Vercel.
-            </p>
-          </a>
+          </div>
         </div>
-      </main>
+        <p className={"m-2 mb-8"}>
+          Very cool, very fun.
+        </p>
+      </main >
 
-      <footer className={"mb-4"}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <p>
-            Powered by{" "}
-          </p>
-          <Image
-            src="/vercel.svg"
-            alt="Vercel Logo"
-            width={84}
-            height={30}
-            className={"dark:invert"}
-          />
-        </a>
-      </footer>
-    </div>
+    </div >
   )
+}
+export async function getStaticProps() {
+  const allPosts = await fetch(`${process.env.STRAPI_API_URL}/mountains?populate=*`, { headers: { 'Authorization': `Bearer ${process.env.STRAPI_API_TOKEN}` } })
+    .then(res => res.json())
+    .then(data => data.data);
+  return {
+    props: { allPosts },
+  }
 }
